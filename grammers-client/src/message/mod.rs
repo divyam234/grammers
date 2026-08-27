@@ -13,12 +13,14 @@
 
 mod button;
 mod input_message;
+mod input_rich_message;
 mod message;
 mod reactions;
 mod reply_markup;
 
 pub use button::{Button, Key};
 pub use input_message::InputMessage;
+pub use input_rich_message::InputRichMessage;
 pub use message::Message;
 pub use reactions::InputReactions;
 pub use reply_markup::ReplyMarkup;

@@ -10,6 +10,7 @@ use std::time::{SystemTime, UNIX_EPOCH};
 
 use grammers_tl_types as tl;
 
+use super::input_rich_message::InputRichMessage;
 use super::reply_markup::ReplyMarkup;
 use crate::media::{Attribute, Media, Uploaded};
 
@@ -30,6 +31,7 @@ pub struct InputMessage {
     pub(crate) silent: bool,
     pub(crate) text: String,
     pub(crate) media: Option<tl::enums::InputMedia>,
+    pub(crate) rich_message: Option<tl::enums::InputRichMessage>,
     media_ttl: Option<i32>,
     mime_type: Option<String>,
 }
@@ -381,6 +383,11 @@ impl InputMessage {
     /// This method should be called before setting any media, else it won't have any effect.
     pub fn mime_type(mut self, mime_type: &str) -> Self {
         self.mime_type = Some(mime_type.to_string());
+        self
+    }
+
+    pub fn rich_message(mut self, rich_message: InputRichMessage) -> Self {
+        self.rich_message = Some(rich_message.raw);
         self
     }
 

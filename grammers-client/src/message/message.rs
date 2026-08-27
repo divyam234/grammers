@@ -347,7 +347,7 @@ impl Message {
 
     /// The message's text.
     ///
-    /// For service or empty messages, this will be the empty strings.
+    /// For service, empty or rich messages, this will be the empty strings.
     ///
     /// If the message has media, this text is the caption commonly displayed underneath it.
     pub fn text(&self) -> &str {
@@ -355,6 +355,16 @@ impl Message {
             tl::enums::Message::Empty(_) => "",
             tl::enums::Message::Message(message) => &message.message,
             tl::enums::Message::Service(_) => "",
+        }
+    }
+
+    /// The message's rich message content if any.
+    pub fn rich_message(&self) -> Option<&tl::enums::RichMessage> {
+        match &self.raw {
+            tl::enums::Message::Message(tl::types::Message { rich_message, .. }) => {
+                rich_message.as_ref()
+            }
+            _ => None,
         }
     }
 
@@ -813,6 +823,7 @@ impl fmt::Debug for Message {
             .field("outgoing", &self.outgoing())
             .field("date", &self.date())
             .field("text", &self.text())
+            .field("rich_message", &self.rich_message())
             .field("peer", &self.peer())
             .field("sender", &self.sender())
             .field("reply_to_message_id", &self.reply_to_message_id())

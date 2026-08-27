@@ -648,7 +648,7 @@ impl Client {
                 allow_paid_floodskip: false,
                 allow_paid_stars: None,
                 suggested_post: None,
-                rich_message: None,
+                rich_message: message.rich_message.clone(),
             })
             .await
         }?;
