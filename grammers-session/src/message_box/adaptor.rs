@@ -456,7 +456,7 @@ fn peer_from_input_peer(input_peer: &tl::enums::InputPeer) -> tl::enums::Peer {
 
 fn message_peer(message: &tl::enums::Message) -> Option<tl::enums::Peer> {
     match message {
-        tl::enums::Message::Empty(_) => None,
+        tl::enums::Message::Empty(m) => m.peer_id.clone(),
         tl::enums::Message::Message(m) => Some(m.peer_id.clone()),
         tl::enums::Message::Service(m) => Some(m.peer_id.clone()),
     }
@@ -464,7 +464,10 @@ fn message_peer(message: &tl::enums::Message) -> Option<tl::enums::Peer> {
 
 fn message_channel_id(message: &tl::enums::Message) -> Option<i64> {
     match message {
-        tl::enums::Message::Empty(_) => None,
+        tl::enums::Message::Empty(m) => match &m.peer_id {
+            Some(tl::enums::Peer::Channel(c)) => Some(c.channel_id),
+            _ => None,
+        },
         tl::enums::Message::Message(m) => match &m.peer_id {
             tl::enums::Peer::Channel(c) => Some(c.channel_id),
             _ => None,

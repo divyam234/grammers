@@ -685,7 +685,7 @@ impl MessageBoxes {
         tl::types::updates::Difference {
             new_messages,
             new_encrypted_messages,
-            other_updates: updates,
+            other_updates: mut updates,
             chats,
             users,
             state: tl::enums::updates::State::State(state),
@@ -703,6 +703,17 @@ impl MessageBoxes {
 
         // other_updates can contain things like UpdateChannelTooLong and UpdateNewChannelMessage.
         // We need to process those as if they were socket updates to discard any we have already handled.
+        // If the channel's difference is planned to be handled, skip its updates
+        updates.retain(|update| {
+            let Some(info) = PtsInfo::from_update(&update) else {
+                return true;
+            };
+            if let Key::Channel(_) = info.key {
+                !self.getting_diff_for.contains(&info.key)
+            } else {
+                true
+            }
+        });
         let us = UpdatesLike::Updates(tl::enums::Updates::Updates(tl::types::Updates {
             updates,
             users,

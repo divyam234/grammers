@@ -629,3 +629,64 @@ fn test_process_socket_update_for_new_channel_dispatches_first_update() {
         ))
     );
 }
+
+#[test]
+fn test_common_and_channel_difference_do_not_duplicate_message() {
+    reset_time();
+    let state = UpdatesState {
+        pts: 12,
+        qts: 34,
+        date: 56,
+        seq: 78,
+        channels: vec![ChannelState { id: 43, pts: 21 }],
+    };
+    let mut message_boxes = MessageBoxes::load(state.clone());
+    let message = tl::enums::Message::Empty(tl::types::MessageEmpty {
+        id: 42,
+        peer_id: Some(tl::enums::Peer::Channel(tl::types::PeerChannel {
+            channel_id: 43,
+        })),
+    });
+    assert!(
+        message_boxes
+            .getting_diff_for
+            .contains(&super::Key::Channel(43))
+    );
+    let (updates, _, _) = message_boxes.apply_difference(
+        tl::enums::updates::Difference::Difference(tl::types::updates::Difference {
+            new_messages: vec![],
+            new_encrypted_messages: vec![],
+            other_updates: vec![tl::enums::Update::NewChannelMessage(
+                tl::types::UpdateNewChannelMessage {
+                    message: message.clone(),
+                    pts: 23,
+                    pts_count: 1,
+                },
+            )],
+            chats: vec![],
+            users: vec![],
+            state: tl::enums::updates::State::State(tl::types::updates::State {
+                pts: 14,
+                qts: 0,
+                date: NO_DATE,
+                seq: NO_SEQ,
+                unread_count: 0,
+            }),
+        }),
+    );
+    assert_eq!(updates, vec![]);
+
+    let (updates, _, _) = message_boxes.apply_channel_difference(
+        tl::enums::updates::ChannelDifference::Difference(tl::types::updates::ChannelDifference {
+            r#final: true,
+            pts: 23,
+            timeout: None,
+            new_messages: vec![message.clone()],
+            other_updates: vec![],
+            chats: vec![],
+            users: vec![],
+        }),
+    );
+
+    assert_eq!(updates.len(), 1);
+}
