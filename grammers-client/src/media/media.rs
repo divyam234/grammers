@@ -139,25 +139,29 @@ impl Photo {
     }
 
     pub fn to_raw_input_media(&self) -> tl::types::InputMediaPhoto {
+        tl::types::InputMediaPhoto {
+            spoiler: false,
+            id: self.to_raw_input_photo(),
+            ttl_seconds: self.raw.ttl_seconds,
+            live_photo: false,
+            video: None,
+        }
+    }
+
+    pub fn to_raw_input_photo(&self) -> tl::enums::InputPhoto {
         use tl::{
             enums::{InputPhoto as eInputPhoto, Photo},
             types::InputPhoto,
         };
 
-        tl::types::InputMediaPhoto {
-            spoiler: false,
-            id: match self.raw.photo {
-                Some(Photo::Photo(ref photo)) => InputPhoto {
-                    id: photo.id,
-                    access_hash: photo.access_hash,
-                    file_reference: photo.file_reference.clone(),
-                }
-                .into(),
-                _ => eInputPhoto::Empty,
-            },
-            ttl_seconds: self.raw.ttl_seconds,
-            live_photo: false,
-            video: None,
+        match self.raw.photo {
+            Some(Photo::Photo(ref photo)) => InputPhoto {
+                id: photo.id,
+                access_hash: photo.access_hash,
+                file_reference: photo.file_reference.clone(),
+            }
+            .into(),
+            _ => eInputPhoto::Empty,
         }
     }
 
@@ -260,26 +264,30 @@ impl Document {
     }
 
     pub fn to_raw_input_media(&self) -> tl::types::InputMediaDocument {
+        tl::types::InputMediaDocument {
+            spoiler: false,
+            id: self.to_raw_input_document(),
+            ttl_seconds: self.raw.ttl_seconds,
+            query: None,
+            video_cover: None,
+            video_timestamp: None,
+        }
+    }
+
+    pub fn to_raw_input_document(&self) -> tl::enums::InputDocument {
         use tl::{
             enums::{Document, InputDocument as eInputDocument},
             types::InputDocument,
         };
 
-        tl::types::InputMediaDocument {
-            spoiler: false,
-            id: match self.raw.document {
-                Some(Document::Document(ref document)) => InputDocument {
-                    id: document.id,
-                    access_hash: document.access_hash,
-                    file_reference: document.file_reference.clone(),
-                }
-                .into(),
-                _ => eInputDocument::Empty,
-            },
-            ttl_seconds: self.raw.ttl_seconds,
-            query: None,
-            video_cover: None,
-            video_timestamp: None,
+        match self.raw.document {
+            Some(Document::Document(ref document)) => InputDocument {
+                id: document.id,
+                access_hash: document.access_hash,
+                file_reference: document.file_reference.clone(),
+            }
+            .into(),
+            _ => eInputDocument::Empty,
         }
     }
 

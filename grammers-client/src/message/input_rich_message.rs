@@ -115,7 +115,8 @@ impl InputRichMessage {
         self
     }
 
-    /// Attaches an [`InputPhoto`] to the rich message.
+    /// Attaches an [`tl::enums::InputPhoto`] to the rich message.
+    /// (You can get it by [`crate::media::Photo::to_raw_input_photo`].)
     ///
     /// When using HTML or Markdown formatting, photos are embedded by referencing a custom
     /// URI scheme: `tg://photo?id={id}`. This method binds the corresponding `id` string
@@ -200,7 +201,8 @@ impl InputRichMessage {
         self
     }
 
-    /// Attaches an [`InputDocument`] to the rich message.
+    /// Attaches an [`tl::enums::InputDocument`] to the rich message.
+    /// (You can get it by [`crate::media::Document::to_raw_input_document`].)
     ///
     /// When using HTML or Markdown formatting, documents are embedded by referencing a custom
     /// URI scheme: `tg://video?id={id}` or `tg://audio?id={id}` or `tg://document?id={id}`.
