@@ -7,7 +7,10 @@
 // except according to those terms.
 
 use std::mem;
+#[cfg(not(target_arch = "wasm32"))]
 use std::time::{Instant, SystemTime, UNIX_EPOCH};
+#[cfg(target_arch = "wasm32")]
+use web_time::{Instant, SystemTime, UNIX_EPOCH};
 
 use grammers_crypto::{AuthKey, DequeBuffer, decrypt_data_v2, encrypt_data_v2};
 use grammers_tl_types::{self as tl, Cursor, Deserializable, Identifiable, Serializable};

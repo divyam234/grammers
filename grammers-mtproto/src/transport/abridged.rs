@@ -90,7 +90,7 @@ impl Transport for Abridged {
             return Err(Error::MissingBytes);
         }
 
-        if header_len == 1 && len >= 4 {
+        if header_len == 1 && len == 4 {
             let data = i32::from_le_bytes(buffer[1..5].try_into().unwrap());
             if data < 0 {
                 return Err(Error::BadStatus {
